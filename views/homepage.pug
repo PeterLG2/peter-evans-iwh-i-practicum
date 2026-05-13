@@ -1,0 +1,28 @@
+doctype html
+html
+  head
+    title= title
+
+  body
+    h1 Pet Records
+
+    a(href="/update-cobj") Add to this table
+
+    br
+    br
+
+    table(border="1")
+      thead
+        tr
+          th Name
+          th Type
+          th Current Vaccinations
+          th Primary Color
+
+      tbody
+        each pet in data
+          tr
+            td= pet.properties.name
+            td= pet.properties.type
+            td= pet.properties.current_vaccinations
+            td= pet.properties.primary_color

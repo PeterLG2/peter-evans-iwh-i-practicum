@@ -8,19 +8,62 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
-const PRIVATE_APP_ACCESS = '';
+require('dotenv').config();
+const PRIVATE_APP_ACCESS = process.env.PRIVATE_APP_TOKEN;
+const CUSTOM_OBJECT_TYPE = '2-62413956';
+const properties = 'name,type,current_vaccinations,primary_color';
 
-// TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
+const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    'Content-Type': 'application/json'
+};
 
-// * Code for Route 1 goes here
+// ROUTE 1 - Homepage: get pet records and render table
+app.get('/', async (req, res) => {
+    const endpoint = `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_TYPE}?properties=${properties}`;
 
-// TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
+    try {
+        const resp = await axios.get(endpoint, { headers });
+        const data = resp.data.results;
 
-// * Code for Route 2 goes here
+        res.render('homepage', {
+            title: 'Pets | Integrating With HubSpot I Practicum',
+            data
+        });
+    } catch (error) {
+        console.error(error.response?.data || error.message);
+        res.status(500).send('There was an error getting custom object records.');
+    }
+});
 
-// TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
+// ROUTE 2 - Form page
+app.get('/update-cobj', (req, res) => {
+    res.render('updates', {
+        title: 'Update Custom Object Form | Integrating With HubSpot I Practicum'
+    });
+});
 
-// * Code for Route 3 goes here
+// ROUTE 3 - Create new pet record
+app.post('/update-cobj', async (req, res) => {
+    const newPet = {
+        properties: {
+            name: req.body.name,
+            type: req.body.type,
+            current_vaccinations: req.body.current_vaccinations,
+            primary_color: req.body.primary_color
+        }
+    };
+
+    const endpoint = `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_TYPE}`;
+
+    try {
+        await axios.post(endpoint, newPet, { headers });
+        res.redirect('/');
+    } catch (error) {
+        console.error(error.response?.data || error.message);
+        res.status(500).send('There was an error creating the custom object record.');
+    }
+});
 
 /** 
 * * This is sample code to give you a reference for how you should structure your calls. 
