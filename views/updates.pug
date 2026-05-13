@@ -1,0 +1,44 @@
+doctype html
+html
+  head
+    title= title
+
+  body
+    h1 Add a New Pet
+
+    a(href="/") Return to the homepage
+
+    br
+    br
+
+    form(action="/update-cobj" method="POST")
+
+      label(for="name") Name:
+      br
+      input(type="text" name="name" required=true)
+
+      br
+      br
+
+      label(for="type") Type:
+      br
+      input(type="text" name="type" required=true)
+
+      br
+      br
+
+      label(for="current_vaccinations") Current Vaccinations:
+      br
+      input(type="text" name="current_vaccinations" required=true)
+
+      br
+      br
+
+      label(for="primary_color") Primary Color:
+      br
+      input(type="text" name="primary_color" required=true)
+
+      br
+      br
+
+      button(type="submit") Create Pet
